@@ -1,0 +1,22 @@
+{
+  "name": "dungeons",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Szymon Rozkocha",
+  "license": "Private",
+  "private": true,
+  "scripts": {
+    "start": "webpack --mode development --watch"
+  },
+  "devDependencies": {
+    "file-loader": "^4.2.0",
+    "raw-loader": "^3.1.0",
+    "ts-loader": "^6.1.0",
+    "typescript": "^3.6.3",
+    "url-loader": "^2.1.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "gl-matrix": "^3.1.0",
+    "@types/gl-matrix": "^2.4.5"
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "name": "knight_top",
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "knight_down",
+    "x": 0,
+    "y": 16,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "knight_down_right",
+    "x": 0,
+    "y": 32,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "knight_down_left",
+    "x": 0,
+    "y": 48,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "floor",
+    "x": 16,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall",
+    "x": 32,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall_left_end",
+    "x": 32,
+    "y": 16,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall_right_end",
+    "x": 32,
+    "y": 32,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall_top",
+    "x": 48,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall_convave_corner",
+    "x": 64,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "wall_convex_corner",
+    "x": 80,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "sword",
+    "x": 16,
+    "y": 16,
+    "width": 16,
+    "height": 32
+  },
+  {
+    "name": "sword_top",
+    "x": 16,
+    "y": 16,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "sword_bottom",
+    "x": 16,
+    "y": 32,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "bat_up",
+    "x": 96,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "bat_down",
+    "x": 96,
+    "y": 16,
+    "width": 16,
+    "height": 16
+  }
+]
