@@ -29,7 +29,7 @@ export default class Render {
     }
 
     public clear(): void {
-        this.gl.clearColor(1, 1, 1, 1);
+        this.gl.clearColor(0, 0, 0, 1);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
         this.gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
     }
@@ -76,7 +76,7 @@ export default class Render {
 
 
         const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
-        this.gl.uniform1f(scaleUniform, 160);
+        this.gl.uniform1f(scaleUniform, 128);
 
         const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
         this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);

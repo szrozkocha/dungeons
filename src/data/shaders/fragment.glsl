@@ -8,16 +8,16 @@ void main() {
     highp float maxSize = ceil(sqrt(pow(uSize.x / 2.0, 2.0) + pow(uSize.y / 2.0, 2.0))) * 2.0;
     highp vec2 innerPos = (maxSize - uSize) / 2.0;
 
-    highp vec2 croped = (floor(vTextureCoord * uSize + 0.5) + 0.5) / uSize;
-
-    highp vec2 moved = croped - 0.5;
+    highp vec2 translated = floor(vTextureCoord * maxSize) + 0.5;
+    highp vec2 moved = translated - maxSize / 2.0;
     highp vec2 rotated = vec2(moved.x * cos(uRotation) - moved.y * sin(uRotation), moved.x * sin(uRotation) + moved.y * cos(uRotation));
-    highp vec2 movedBack = rotated + 0.5;
-    highp vec2 textureCoord = (movedBack * (1.0 + innerPos * 2.0 / maxSize)) - innerPos / maxSize;
+    highp vec2 movedBack = rotated + maxSize / 2.0;
+    highp vec2 textureCoord = (movedBack - innerPos) / (maxSize - 2.0 * innerPos);
 
-    if(textureCoord.x < 0.0 || textureCoord.y < 0.0 || textureCoord.x > 1.0 || textureCoord.y > 1.0) {
-        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
-    } else {
+    if(0.0 <= textureCoord.x && textureCoord.x <= 1.0 &&
+    0.0 <= textureCoord.y && textureCoord.y <= 1.0) {
         gl_FragColor = texture2D(uSampler, textureCoord);
+    } else {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }
 }

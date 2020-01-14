@@ -4,7 +4,7 @@ import Render from "./webgl/Render";
 const render: Render = new Render("canvas");
 
 const wall: Sprite = new Sprite(
-    0,
+    -24,
     0,
     0,
     0,
@@ -12,7 +12,7 @@ const wall: Sprite = new Sprite(
 );
 
 const sword: Sprite = new Sprite(
-    64,
+    0,
     0,
     0,
     Math.PI / 2,
@@ -20,7 +20,7 @@ const sword: Sprite = new Sprite(
 );
 
 const bat: Sprite = new Sprite(
-    -64,
+    24,
     0,
     0,
     0,
@@ -31,13 +31,13 @@ setInterval(() => {
     const angle = Math.PI / (1000 / 60 * 10);
 
     wall.rotate(angle);
-    //sword.rotate(angle);
+    sword.rotate(angle);
     bat.rotate(angle);
 
     render.resize();
     render.clear();
 
-    render.draw(wall);
     render.draw(sword);
+    render.draw(wall);
     render.draw(bat);
 }, 1000 / 60);
