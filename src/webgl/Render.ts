@@ -81,8 +81,12 @@ export default class Render {
         const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
         this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);
 
-        const sizeUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SIZE_UNIFORM);
-        this.gl.uniform2fv(sizeUniform, new Float32Array([texture.getWidth(), texture.getHeight()]));
+        const maxSizeUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.MAX_SIZE_UNIFORM);
+        const maxSize = Math.ceil(Math.sqrt(Math.pow(texture.getWidth() / 2.0, 2.0) + Math.pow(texture.getHeight() / 2.0, 2.0))) * 2.0;
+        this.gl.uniform1f(maxSizeUniform, maxSize);
+
+        const innerPosUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.INNER_POS_UNIFORM);
+        this.gl.uniform2fv(innerPosUniform, [(maxSize - texture.getWidth()) / 2.0, (maxSize - texture.getHeight()) / 2.0]);
 
         const rotationUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.ROTATION_UNIFORM);
         this.gl.uniform1f(rotationUniform, sprite.getRotation());
