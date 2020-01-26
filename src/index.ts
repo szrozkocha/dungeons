@@ -1,43 +1,15 @@
-import Sprite from "./webgl/Sprite";
+
 import Render from "./webgl/Render";
+import Game from "./Game";
 
-const render: Render = new Render("canvas");
+window.onload = function () {
+    const render: Render = new Render("canvas");
+    const game: Game = new Game(render);
 
-const wall: Sprite = new Sprite(
-    -24,
-    0,
-    0,
-    0,
-    "wall"
-);
+    function run(timestamp: number): void {
+        game.update(timestamp);
+        requestAnimationFrame(run);
+    }
 
-const sword: Sprite = new Sprite(
-    0,
-    0,
-    0,
-    Math.PI / 2,
-    "sword"
-);
-
-const bat: Sprite = new Sprite(
-    24,
-    0,
-    0,
-    0,
-    "bat_up"
-);
-
-setInterval(() => {
-    const angle = Math.PI / (1000 / 60 * 10);
-
-    wall.rotate(angle);
-    sword.rotate(angle);
-    bat.rotate(angle);
-
-    render.resize();
-    render.clear();
-
-    render.draw(sword);
-    render.draw(wall);
-    render.draw(bat);
-}, 1000 / 60);
+    requestAnimationFrame(run);
+};

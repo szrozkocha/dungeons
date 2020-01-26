@@ -86,6 +86,18 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/Game.ts":
+/*!*********************!*\
+  !*** ./src/Game.ts ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Game; });\n/* harmony import */ var _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webgl/Sprite */ \"./src/webgl/Sprite.ts\");\n\r\nclass Game {\r\n    constructor(render) {\r\n        this.render = render;\r\n        this.sprites = [];\r\n        this.lastFrameTimeMs = 0;\r\n        this.delta = 0;\r\n        this.fps = 1000 / 60;\r\n        this.frame = 0;\r\n        this.sprites.push(new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](-24, 0, 0, 0, \"wall\"), new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](0, 0, 0, Math.PI / 2, \"sword\"), new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](24, 0, 0, 0, \"bat_up\"));\r\n    }\r\n    update(timestamp) {\r\n        this.delta += timestamp - this.lastFrameTimeMs;\r\n        this.lastFrameTimeMs = timestamp;\r\n        while (this.delta >= this.fps) {\r\n            this.tick(this.frame);\r\n            this.delta -= this.fps;\r\n            ++this.frame;\r\n        }\r\n        this.draw();\r\n    }\r\n    tick(frame) {\r\n        const angle = Math.PI / (1000 / 60 * 10);\r\n        for (const sprite of this.sprites) {\r\n            sprite.rotate(angle);\r\n        }\r\n    }\r\n    draw() {\r\n        this.render.resize();\r\n        this.render.clear();\r\n        for (const sprite of this.sprites) {\r\n            this.render.draw(sprite);\r\n        }\r\n    }\r\n}\r\n\n\n//# sourceURL=webpack:///./src/Game.ts?");
+
+/***/ }),
+
 /***/ "./src/data/shaders/fragment.glsl":
 /*!****************************************!*\
   !*** ./src/data/shaders/fragment.glsl ***!
@@ -176,7 +188,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webgl/Sprite */ \"./src/webgl/Sprite.ts\");\n/* harmony import */ var _webgl_Render__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./webgl/Render */ \"./src/webgl/Render.ts\");\n\r\n\r\nconst render = new _webgl_Render__WEBPACK_IMPORTED_MODULE_1__[\"default\"](\"canvas\");\r\nconst wall = new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](-24, 0, 0, 0, \"wall\");\r\nconst sword = new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](0, 0, 0, Math.PI / 2, \"sword\");\r\nconst bat = new _webgl_Sprite__WEBPACK_IMPORTED_MODULE_0__[\"default\"](24, 0, 0, 0, \"bat_up\");\r\nsetInterval(() => {\r\n    const angle = Math.PI / (1000 / 60 * 10);\r\n    wall.rotate(angle);\r\n    sword.rotate(angle);\r\n    bat.rotate(angle);\r\n    render.resize();\r\n    render.clear();\r\n    render.draw(sword);\r\n    render.draw(wall);\r\n    render.draw(bat);\r\n}, 1000 / 60);\r\n\n\n//# sourceURL=webpack:///./src/index.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _webgl_Render__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webgl/Render */ \"./src/webgl/Render.ts\");\n/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Game */ \"./src/Game.ts\");\n\r\n\r\nwindow.onload = function () {\r\n    const render = new _webgl_Render__WEBPACK_IMPORTED_MODULE_0__[\"default\"](\"canvas\");\r\n    const game = new _Game__WEBPACK_IMPORTED_MODULE_1__[\"default\"](render);\r\n    function run(timestamp) {\r\n        game.update(timestamp);\r\n        requestAnimationFrame(run);\r\n    }\r\n    requestAnimationFrame(run);\r\n};\r\n\n\n//# sourceURL=webpack:///./src/index.ts?");
 
 /***/ }),
 
