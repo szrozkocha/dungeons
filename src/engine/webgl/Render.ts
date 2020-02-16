@@ -2,16 +2,19 @@ import HtmlException from "../exception/HtmlException";
 import GlException from "../exception/GlException";
 import SpriteShaderProgram from "./SpriteShaderProgram";
 import TextureManager from "./TextureManager";
-import vertexShaderSource from "../data/shaders/vertex.glsl";
-import fragmentShaderSource from "../data/shaders/fragment.glsl";
-import Sprite from "./Sprite";
+import vertexShaderSource from "../../data/shaders/vertex.glsl";
+import fragmentShaderSource from "../../data/shaders/fragment.glsl";
+import Entity from "../entity/Entity";
+import Processable from "../Processable";
+import Translatable from "./Translatable";
 
-export default class Render {
+export default class Render extends Translatable {
     private readonly gl: WebGLRenderingContext;
     private readonly spriteShaderProgram: SpriteShaderProgram;
     private readonly textureManager: TextureManager;
 
     constructor(canvasId: string) {
+        super(0, 0, 0, 0);
         this.gl = Render.getWebGl(Render.getCanvas(canvasId));
 
         this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
@@ -34,10 +37,14 @@ export default class Render {
         this.gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
     }
 
-    public draw(sprite: Sprite) {
+    public drawEntity(entity: Entity) {
+        this.draw(entity, entity.getX(), entity.getY(), entity.getZ(), entity.getRotation());
+    }
+
+    public draw(drawable: Processable, x: number, y: number, z: number, rotation: number) {
         this.spriteShaderProgram.use();
 
-        const texture = this.textureManager.getTexture(sprite.getTexture());
+        const texture = this.textureManager.getTexture(drawable.getTexture());
 
 
         const positionAttribute: number = this.spriteShaderProgram.getAttribute(SpriteShaderProgram.POSITION_ATTRIBUTE);
@@ -68,11 +75,17 @@ export default class Render {
 
 
         const zUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.Z_UNIFORM);
-        this.gl.uniform1f(zUniform, sprite.getZ());
+        this.gl.uniform1f(zUniform, z + this.z);
 
 
         const positionUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.POSITION_UNIFORM);
-        this.gl.uniform2fv(positionUniform, new Float32Array([sprite.getX(), sprite.getY()]));
+
+        const rotatedX = x * Math.cos(this.rotation) - y * Math.sin(this.rotation);
+        const rotatedY = x * Math.sin(this.rotation) + y * Math.cos(this.rotation);
+        const finalX = rotatedX + this.x;
+        const finalY = rotatedY + this.y;
+
+        this.gl.uniform2fv(positionUniform, new Float32Array([finalX, finalY]));
 
 
         const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
@@ -89,7 +102,7 @@ export default class Render {
         this.gl.uniform2fv(innerPosUniform, [(maxSize - texture.getWidth()) / 2.0, (maxSize - texture.getHeight()) / 2.0]);
 
         const rotationUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.ROTATION_UNIFORM);
-        this.gl.uniform1f(rotationUniform, sprite.getRotation());
+        this.gl.uniform1f(rotationUniform, rotation);
 
 
         const samplerUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SAMPLER_UNIFORM);

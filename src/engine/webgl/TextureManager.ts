@@ -1,5 +1,5 @@
-import texturesConfig from "../data/textrues/textures.json";
-import texturesImage from "../data/textrues/textures.png";
+import texturesConfig from "../../data/textrues/textures.json";
+import texturesImage from "../../data/textrues/textures.png";
 import GlException from "../exception/GlException";
 import Texture from "./Texture";
 
