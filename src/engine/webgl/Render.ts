@@ -13,7 +13,7 @@ export default class Render extends Translatable {
     private readonly spriteShaderProgram: SpriteShaderProgram;
     private readonly textureManager: TextureManager;
 
-    constructor(canvasId: string) {
+    constructor(canvasId: string, textures: HTMLImageElement) {
         super(0, 0, 0, 0);
         this.gl = Render.getWebGl(Render.getCanvas(canvasId));
 
@@ -24,7 +24,7 @@ export default class Render extends Translatable {
         this.gl.depthFunc(WebGLRenderingContext.LEQUAL);
 
         this.spriteShaderProgram = new SpriteShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
-        this.textureManager = new TextureManager(this.gl);
+        this.textureManager = new TextureManager(this.gl, textures);
     }
 
     public resize(): void {

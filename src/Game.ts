@@ -6,6 +6,8 @@ import Entity from "./engine/entity/Entity";
 import StaticEntity from "./engine/entity/StaticEntity";
 import InputManager from "./engine/input/InputManager";
 import InputSignal from "./engine/input/InputSignal";
+import Wall from "./engine/entity/wall/Wall";
+import WallType from "./engine/entity/wall/WallType";
 
 export default class Game extends GameWithLoop {
     private readonly sprites: Entity[] = [];
@@ -18,7 +20,7 @@ export default class Game extends GameWithLoop {
                 0,
                 0,
                 0,
-                new Sprite("wall")
+                new Wall(WallType.CONVEX_CORNER_BOTTOM_RIGHT)
             ),
             new StaticEntity(
                 0,
@@ -32,9 +34,14 @@ export default class Game extends GameWithLoop {
                 0,
                 0,
                 0,
-                new Sprite("bat_up")
-            )
-            ,
+                new Animation(
+                    [
+                        "bat_up",
+                        "bat_down",
+                    ],
+                    20
+                )
+            ),
             new StaticEntity(
                 0,
                 24,
@@ -70,10 +77,12 @@ export default class Game extends GameWithLoop {
 
         const angle = Math.PI / (1000 / 60 * 10);
 
-        this.render.rotate(angle);
+        //this.render.rotate(angle);
+
+        this.sprites[1].rotate(angle);
 
         for(const sprite of this.sprites) {
-            sprite.rotate(angle);
+            //sprite.rotate(angle);
             sprite.tick(frame);
         }
     }

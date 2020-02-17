@@ -1,0 +1,30 @@
+[
+  {
+    "name": "floor",
+    "x": 16,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "sword",
+    "x": 16,
+    "y": 16,
+    "width": 16,
+    "height": 32
+  },
+  {
+    "name": "bat_up",
+    "x": 96,
+    "y": 0,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "name": "bat_down",
+    "x": 96,
+    "y": 16,
+    "width": 16,
+    "height": 16
+  }
+]
