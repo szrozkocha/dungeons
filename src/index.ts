@@ -9,6 +9,7 @@ window.onload = function () {
 
     image.onload = () => {
         const render: Render = new Render("canvas", image);
+        render.resize(window.innerWidth, window.innerHeight);
         const inputManager: InputManager = new InputManager();
         const game: Game = new Game(render, inputManager);
 
@@ -17,11 +18,15 @@ window.onload = function () {
             requestAnimationFrame(run);
         }
 
-        window.onkeydown = function(event: KeyboardEvent) {
+        window.onresize = () => {
+            render.resize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onkeydown = (event: KeyboardEvent) => {
             inputManager.onKeyDown(event);
         };
 
-        window.onkeyup = function(event: KeyboardEvent) {
+        window.onkeyup = (event: KeyboardEvent) => {
             inputManager.onKeyUp(event);
         };
 

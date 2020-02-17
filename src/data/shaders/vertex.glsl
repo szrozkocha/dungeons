@@ -16,7 +16,7 @@ void main() {
     vec2 transformed = scaled * vec2(1.0, uRatio);
     vec2 mirrored = transformed * vec2(1.0, -1.0);
 
-    gl_Position = vec4(mirrored, uZ, 1.0);
+    gl_Position = vec4(mirrored, (-uZ + 128.0) / 256.0, 1.0);
 
     vTextureCoord = aPosition;
 }

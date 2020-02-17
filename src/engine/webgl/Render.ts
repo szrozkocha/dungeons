@@ -9,6 +9,8 @@ import Processable from "../Processable";
 import Translatable from "./Translatable";
 
 export default class Render extends Translatable {
+    private static readonly SCALE: number = 256;
+
     private readonly gl: WebGLRenderingContext;
     private readonly spriteShaderProgram: SpriteShaderProgram;
     private readonly textureManager: TextureManager;
@@ -20,14 +22,18 @@ export default class Render extends Translatable {
         this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
         this.gl.enable(WebGLRenderingContext.CULL_FACE);
         this.gl.enable(WebGLRenderingContext.BLEND);
-        this.gl.blendFunc(WebGLRenderingContext.ONE, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
+        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         this.gl.depthFunc(WebGLRenderingContext.LEQUAL);
 
         this.spriteShaderProgram = new SpriteShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
         this.textureManager = new TextureManager(this.gl, textures);
     }
 
-    public resize(): void {
+    public resize(innerWidth: number, innerHeight: number): void {
+        this.gl.canvas.width = innerWidth;
+        this.gl.canvas.height = innerHeight;
+
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     }
 
@@ -89,7 +95,7 @@ export default class Render extends Translatable {
 
 
         const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
-        this.gl.uniform1f(scaleUniform, 128);
+        this.gl.uniform1f(scaleUniform, Render.SCALE);
 
         const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
         this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);
@@ -127,7 +133,7 @@ export default class Render extends Translatable {
         return buffer;
     }
 
-    private static getCanvas(canvasId: string): HTMLCanvasElement {
+    public static getCanvas(canvasId: string): HTMLCanvasElement {
         const canvas: HTMLElement | null = document.getElementById(canvasId);
 
         if (canvas instanceof HTMLCanvasElement) {

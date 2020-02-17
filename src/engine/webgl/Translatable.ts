@@ -47,4 +47,14 @@ export default class Translatable {
     public rotate(angle: number): void {
         this.rotation += angle;
     }
+
+    public static compare(a: Translatable, b: Translatable) {
+        if (a.getZ() < b.getZ()) {
+            return -1;
+        }
+        if (b.getZ() < a.getZ()) {
+            return 1;
+        }
+        return 0;
+    }
 }
