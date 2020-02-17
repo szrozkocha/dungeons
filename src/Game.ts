@@ -15,12 +15,12 @@ export default class Game extends GameWithLoop {
     constructor(private render: Render, public inputManager: InputManager) {
         super(60);
         this.sprites.push(
-            new StaticEntity(
+            new Wall(
                 -24,
                 0,
                 0,
                 0,
-                new Wall(WallType.CONVEX_CORNER_BOTTOM_RIGHT)
+                WallType.CONVEX_CORNER_BOTTOM_RIGHT
             ),
             new StaticEntity(
                 0,

@@ -1,10 +1,16 @@
-import Processable from "../../Processable";
 import WallType from "./WallType";
+import Entity from "../Entity";
 
-export default class Wall implements Processable {
+export default class Wall extends Entity {
     private readonly texture: string;
 
-    constructor(wallType: WallType) {
+    constructor(
+        x: number,
+                y: number,
+                z: number,
+                rotation: number,
+        wallType: WallType) {
+        super(x, y, z, rotation);
         switch (wallType) {
             case WallType.LEFT:
                 this.texture = "wall_left";
@@ -41,7 +47,7 @@ export default class Wall implements Processable {
                 break;
             case WallType.TOP:
             default:
-                this.texture = "wall_up";
+                this.texture = "wall_top";
         }
     }
 
