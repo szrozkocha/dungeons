@@ -16,9 +16,18 @@
         canvas {
             display: block;
         }
+
+        #fps {
+            z-index: 1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
+    <div id="fps"></div>
     <canvas id="canvas" width="1024" height="512"></canvas>
     <script src="bundle.js"></script>
 </body>

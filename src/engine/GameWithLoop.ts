@@ -12,7 +12,11 @@ export default abstract class GameWithLoop {
     }
 
     public update(timestamp: number): void {
-        this.delta += timestamp - this.lastFrameTimeMs;
+        const timePerFrame = timestamp - this.lastFrameTimeMs;
+        const fps = 1 / (timePerFrame / 1000);
+        GameWithLoop.updateFps(fps);
+
+        this.delta += timePerFrame;
         this.lastFrameTimeMs = timestamp;
 
         while(this.delta >= this.fps) {
@@ -21,6 +25,11 @@ export default abstract class GameWithLoop {
             ++this.frame;
         }
         this.draw();
+    }
+
+    private static updateFps(fps: number) {
+        // @ts-ignore
+        document.getElementById("fps").innerText = Math.round(fps) + "FPS";
     }
 
     protected abstract tick(timestamp: number): void;

@@ -14,6 +14,7 @@ export default class Render extends Translatable {
     private readonly gl: WebGLRenderingContext;
     private readonly spriteShaderProgram: SpriteShaderProgram;
     private readonly textureManager: TextureManager;
+    private readonly positionBuffer: WebGLBuffer;
 
     constructor(canvasId: string, textures: HTMLImageElement) {
         super(0, 0, 0, 0);
@@ -28,6 +29,8 @@ export default class Render extends Translatable {
 
         this.spriteShaderProgram = new SpriteShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
         this.textureManager = new TextureManager(this.gl, textures);
+
+        this.positionBuffer = this.createBuffer();
     }
 
     public resize(innerWidth: number, innerHeight: number): void {
@@ -54,9 +57,9 @@ export default class Render extends Translatable {
 
 
         const positionAttribute: number = this.spriteShaderProgram.getAttribute(SpriteShaderProgram.POSITION_ATTRIBUTE);
-        const positionBuffer: WebGLBuffer = this.createBuffer();
 
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, positionBuffer);
+
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
 
         const vertices = [
             1.0, 0.0,
@@ -68,7 +71,7 @@ export default class Render extends Translatable {
 
         this.gl.enableVertexAttribArray(positionAttribute);
 
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, positionBuffer);
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
 
         this.gl.vertexAttribPointer(
             positionAttribute,
