@@ -1,4 +1,5 @@
 import Processable from "../Processable";
+import Render from "./Render";
 
 export default class Animation implements Processable {
     private activeTexture: number;
@@ -7,10 +8,6 @@ export default class Animation implements Processable {
     constructor(private textures: string[], private tpf: number) {
         this.activeTexture = 0;
         this.activeFrames = 0;
-    }
-
-    getTexture(): string {
-        return this.textures[this.activeTexture];
     }
 
     tick(): void {
@@ -25,5 +22,9 @@ export default class Animation implements Processable {
             }
         }
 
+    }
+
+    public draw(render: Render): void {
+        render.drawTexture(this.textures[this.activeTexture]);
     }
 }

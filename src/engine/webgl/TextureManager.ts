@@ -1,7 +1,3 @@
-import fireColumnDescriptor from "../../data/textrues/descriptor/fireColumn.json";
-import knightDescriptor from "../../data/textrues/descriptor/knight.json";
-import othersDescriptor from "../../data/textrues/descriptor/others.json";
-import wallDescriptor from "../../data/textrues/descriptor/wall.json";
 import GlException from "../exception/GlException";
 import Texture from "./Texture";
 
@@ -15,21 +11,11 @@ export default class TextureManager {
         throw new GlException("Can't get texture!");
     }
 
-    constructor(gl: WebGLRenderingContext, textures: HTMLImageElement) {
-        for (const textureData of fireColumnDescriptor) {
-            this.createTexture(textures, textureData, gl);
-        }
-
-        for (const textureData of knightDescriptor) {
-            this.createTexture(textures, textureData, gl);
-        }
-
-        for (const textureData of othersDescriptor) {
-            this.createTexture(textures, textureData, gl);
-        }
-
-        for (const textureData of wallDescriptor) {
-            this.createTexture(textures, textureData, gl);
+    constructor(gl: WebGLRenderingContext, textures: HTMLImageElement, texturesDescriptors: TextureData[][]) {
+        for(const texturesDescriptor of texturesDescriptors) {
+            for (const textureData of texturesDescriptor) {
+                this.createTexture(textures, textureData, gl);
+            }
         }
     }
 

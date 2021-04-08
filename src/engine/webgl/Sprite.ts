@@ -1,13 +1,14 @@
 import Processable from "../Processable";
+import Render from "./Render";
 
 export default class Sprite implements Processable {
     constructor(private texture: string) {
     }
 
-    public getTexture(): string {
-        return this.texture;
+    tick(): void {
     }
 
-    tick(): void {
+    public draw(render: Render): void {
+        render.drawTexture(this.texture);
     }
 }

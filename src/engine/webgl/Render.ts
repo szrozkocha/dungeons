@@ -2,13 +2,9 @@ import HtmlException from "../exception/HtmlException";
 import GlException from "../exception/GlException";
 import SpriteShaderProgram from "./SpriteShaderProgram";
 import TextureManager from "./TextureManager";
-import vertexShaderSource from "../../data/shaders/vertex.glsl";
-import fragmentShaderSource from "../../data/shaders/fragment.glsl";
-import Entity from "../entity/Entity";
-import Processable from "../Processable";
-import Translatable from "./Translatable";
+import TranslationManager from "./TranslationManager";
 
-export default class Render extends Translatable {
+export default class Render extends TranslationManager {
     private static readonly SCALE: number = 256;
 
     private readonly gl: WebGLRenderingContext;
@@ -16,8 +12,12 @@ export default class Render extends Translatable {
     private readonly textureManager: TextureManager;
     private readonly positionBuffer: WebGLBuffer;
 
-    constructor(canvasId: string, textures: HTMLImageElement) {
-        super(0, 0, 0, 0);
+    constructor(
+        canvasId: string,
+        createShaderProgram: (gl: WebGLRenderingContext) => SpriteShaderProgram,
+        createTextureManager: (gl: WebGLRenderingContext) => TextureManager
+    ) {
+        super();
         this.gl = Render.getWebGl(Render.getCanvas(canvasId));
 
         this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
@@ -27,10 +27,14 @@ export default class Render extends Translatable {
         this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         this.gl.depthFunc(WebGLRenderingContext.LEQUAL);
 
-        this.spriteShaderProgram = new SpriteShaderProgram(this.gl, vertexShaderSource, fragmentShaderSource);
-        this.textureManager = new TextureManager(this.gl, textures);
+        this.spriteShaderProgram = createShaderProgram(this.gl);
+        this.textureManager = createTextureManager(this.gl);
 
         this.positionBuffer = this.createBuffer();
+    }
+
+    public getTextureManager(): TextureManager {
+        return this.textureManager;
     }
 
     public resize(innerWidth: number, innerHeight: number): void {
@@ -46,26 +50,25 @@ export default class Render extends Translatable {
         this.gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
     }
 
-    public drawEntity(entity: Entity) {
-        this.draw(entity, entity.getX(), entity.getY(), entity.getZ(), entity.getRotation());
-    }
+    public drawTexture(textureName: string) {
+        let texture = this.textureManager.getTexture(textureName);
 
-    public draw(drawable: Processable, x: number, y: number, z: number, rotation: number) {
+        let x = this.get().getX();
+        let y = this.get().getY();
+        let z = this.get().getZ();
+        let angle = this.get().getRotation();
+
         this.spriteShaderProgram.use();
 
-        const texture = this.textureManager.getTexture(drawable.getTexture());
-
-
         const positionAttribute: number = this.spriteShaderProgram.getAttribute(SpriteShaderProgram.POSITION_ATTRIBUTE);
-
 
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
 
         const vertices = [
-            1.0, 0.0,
+            1.001, 0.0,
             0.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0
+            1.001, 1.001,
+            0.0, 1.001
         ];
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, new Float32Array(vertices), WebGLRenderingContext.STATIC_DRAW);
 
@@ -82,19 +85,13 @@ export default class Render extends Translatable {
             0
         );
 
-
         const zUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.Z_UNIFORM);
-        this.gl.uniform1f(zUniform, z + this.z);
+        this.gl.uniform1f(zUniform, z);
 
 
         const positionUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.POSITION_UNIFORM);
 
-        const rotatedX = x * Math.cos(this.rotation) - y * Math.sin(this.rotation);
-        const rotatedY = x * Math.sin(this.rotation) + y * Math.cos(this.rotation);
-        const finalX = rotatedX + this.x;
-        const finalY = rotatedY + this.y;
-
-        this.gl.uniform2fv(positionUniform, new Float32Array([finalX, finalY]));
+        this.gl.uniform2fv(positionUniform, new Float32Array([x, y]));
 
 
         const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
@@ -111,7 +108,7 @@ export default class Render extends Translatable {
         this.gl.uniform2fv(innerPosUniform, [(maxSize - texture.getWidth()) / 2.0, (maxSize - texture.getHeight()) / 2.0]);
 
         const rotationUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.ROTATION_UNIFORM);
-        this.gl.uniform1f(rotationUniform, rotation);
+        this.gl.uniform1f(rotationUniform, angle);
 
 
         const samplerUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SAMPLER_UNIFORM);

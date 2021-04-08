@@ -1,5 +1,6 @@
 import WallType from "./WallType";
 import Entity from "../Entity";
+import Render from "../../webgl/Render";
 
 export default class Wall extends Entity {
     private readonly texture: string;
@@ -51,10 +52,14 @@ export default class Wall extends Entity {
         }
     }
 
-    getTexture(): string {
-        return this.texture;
+    tick(): void {
     }
 
-    tick(): void {
+    public draw(render: Render): void {
+        render.push();
+        render.translate(this.x, this.y, this.z);
+        render.rotate(this.rotation);
+        render.drawTexture(this.texture);
+        render.pop();
     }
 }

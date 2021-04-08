@@ -1,5 +1,6 @@
 import Entity from "./Entity";
 import Processable from "../Processable";
+import Render from "../webgl/Render";
 
 export default class StaticEntity extends Entity {
     public constructor(
@@ -11,12 +12,15 @@ export default class StaticEntity extends Entity {
         super(x, y, z, rotation);
     }
 
-    public getTexture(): string {
-        return this.processable.getTexture();
-    }
-
     public tick(frame: number): void {
         this.processable.tick(frame);
     }
 
+    public draw(render: Render): void {
+        render.push();
+        render.translate(this.x, this.y, this.z);
+        render.rotate(this.rotation);
+        this.processable.draw(render);
+        render.pop();
+    }
 }

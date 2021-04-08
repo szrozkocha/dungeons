@@ -1,5 +1,6 @@
 export default class Translatable {
-    protected constructor(
+
+    public constructor(
         protected x: number,
         protected y: number,
         protected z: number,
@@ -23,11 +24,6 @@ export default class Translatable {
         this.y = y;
     }
 
-    public move(x: number, y: number) {
-        this.x += x;
-        this.y += y;
-    }
-
     public getZ(): number {
         return this.z;
     }
@@ -44,17 +40,14 @@ export default class Translatable {
         this.rotation = rotation;
     }
 
-    public rotate(angle: number): void {
-        this.rotation += angle;
+    public copy(): Translatable {
+        return new Translatable(this.x, this.y, this.z, this.rotation);
     }
 
-    public static compare(a: Translatable, b: Translatable) {
-        if (a.getZ() < b.getZ()) {
-            return -1;
-        }
-        if (b.getZ() < a.getZ()) {
-            return 1;
-        }
-        return 0;
+    public clear(): void {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.rotation = 0;
     }
 }

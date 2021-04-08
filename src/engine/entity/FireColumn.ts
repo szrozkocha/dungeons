@@ -1,5 +1,6 @@
 import Entity from "./Entity";
 import Animation from "../webgl/Animation";
+import Render from "../webgl/Render";
 
 export default class FireColumn extends Entity {
     private readonly animation: Animation;
@@ -25,11 +26,15 @@ export default class FireColumn extends Entity {
         );
     }
 
-    public getTexture(): string {
-        return this.animation.getTexture();
-    }
-
     public tick(): void {
         this.animation.tick();
+    }
+
+    public draw(render: Render): void {
+        render.push();
+        render.translate(this.x, this.y, this.z);
+        render.rotate(this.rotation);
+        this.animation.draw(render);
+        render.pop();
     }
 }
