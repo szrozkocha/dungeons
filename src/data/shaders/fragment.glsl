@@ -5,6 +5,7 @@ uniform highp float uRotation;
 
 uniform highp float uMaxSize;
 uniform highp vec2 uInnerPos;
+uniform highp float uVerticalFlip;
 
 void main() {
     highp vec2 translated = floor(vTextureCoord * uMaxSize) + 0.5;
@@ -15,7 +16,7 @@ void main() {
 
     if(0.0 <= textureCoord.x && textureCoord.x <= 1.0 &&
     0.0 <= textureCoord.y && textureCoord.y <= 1.0) {
-        gl_FragColor = texture2D(uSampler, textureCoord);
+        gl_FragColor = texture2D(uSampler, vec2(abs(textureCoord.x - uVerticalFlip), textureCoord.y));
     } else {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }

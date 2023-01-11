@@ -20,7 +20,7 @@ export default class Render extends TranslationManager {
         super();
         this.gl = Render.getWebGl(Render.getCanvas(canvasId));
 
-        this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
+        this.gl.disable(WebGLRenderingContext.DEPTH_TEST);
         this.gl.enable(WebGLRenderingContext.CULL_FACE);
         this.gl.enable(WebGLRenderingContext.BLEND);
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
@@ -31,6 +31,39 @@ export default class Render extends TranslationManager {
         this.textureManager = createTextureManager(this.gl);
 
         this.positionBuffer = this.createBuffer();
+
+        this.spriteShaderProgram.use();
+
+        const positionAttribute: number = this.spriteShaderProgram.getAttribute(SpriteShaderProgram.POSITION_ATTRIBUTE);
+
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
+
+        const vertices = [
+            1.0000001, 0.0,
+            0.0, 0.0,
+            1.0000001, 1.0000001,
+            0.0, 1.0000001
+        ];
+        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, new Float32Array(vertices), WebGLRenderingContext.STATIC_DRAW);
+
+        this.gl.enableVertexAttribArray(positionAttribute);
+
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
+
+        this.gl.vertexAttribPointer(
+          positionAttribute,
+          2,
+          WebGLRenderingContext.FLOAT,
+          false,
+          0,
+          0
+        );
+
+        const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
+        this.gl.uniform1f(scaleUniform, Render.SCALE);
+
+        const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
+        this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);
     }
 
     public getTextureManager(): TextureManager {
@@ -42,6 +75,9 @@ export default class Render extends TranslationManager {
         this.gl.canvas.height = innerHeight;
 
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+
+        const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
+        this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);
     }
 
     public clear(): void {
@@ -50,7 +86,7 @@ export default class Render extends TranslationManager {
         this.gl.clear(WebGLRenderingContext.DEPTH_BUFFER_BIT);
     }
 
-    public drawTexture(textureName: string) {
+    public drawTexture(textureName: string, verticalFlip: boolean = false) {
         let texture = this.textureManager.getTexture(textureName);
 
         let x = this.get().getX();
@@ -58,47 +94,13 @@ export default class Render extends TranslationManager {
         let z = this.get().getZ();
         let angle = this.get().getRotation();
 
-        this.spriteShaderProgram.use();
-
-        const positionAttribute: number = this.spriteShaderProgram.getAttribute(SpriteShaderProgram.POSITION_ATTRIBUTE);
-
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
-
-        const vertices = [
-            1.001, 0.0,
-            0.0, 0.0,
-            1.001, 1.001,
-            0.0, 1.001
-        ];
-        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, new Float32Array(vertices), WebGLRenderingContext.STATIC_DRAW);
-
-        this.gl.enableVertexAttribArray(positionAttribute);
-
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.positionBuffer);
-
-        this.gl.vertexAttribPointer(
-            positionAttribute,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            0,
-            0
-        );
-
         const zUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.Z_UNIFORM);
         this.gl.uniform1f(zUniform, z);
 
 
         const positionUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.POSITION_UNIFORM);
-
         this.gl.uniform2fv(positionUniform, new Float32Array([x, y]));
 
-
-        const scaleUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SCALE_UNIFORM);
-        this.gl.uniform1f(scaleUniform, Render.SCALE);
-
-        const ratioUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.RATIO_UNIFORM);
-        this.gl.uniform1f(ratioUniform, this.gl.canvas.width / this.gl.canvas.height);
 
         const maxSizeUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.MAX_SIZE_UNIFORM);
         const maxSize = Math.ceil(Math.sqrt(Math.pow(texture.getWidth() / 2.0, 2.0) + Math.pow(texture.getHeight() / 2.0, 2.0))) * 2.0;
@@ -110,6 +112,9 @@ export default class Render extends TranslationManager {
         const rotationUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.ROTATION_UNIFORM);
         this.gl.uniform1f(rotationUniform, angle);
 
+
+        const verticalFlipUniform = this.spriteShaderProgram.getUniform(SpriteShaderProgram.VERTICAL_FLIP_UNIFORM);
+        this.gl.uniform1f(verticalFlipUniform, +verticalFlip)
 
         const samplerUniform: WebGLUniformLocation = this.spriteShaderProgram.getUniform(SpriteShaderProgram.SAMPLER_UNIFORM);
         this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);

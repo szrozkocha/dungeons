@@ -4,11 +4,13 @@ import Render from "./Render";
 export default class Animation implements Processable {
     private activeTexture: number;
     private activeFrames: number;
+    public verticalFlip: boolean = false;
 
     constructor(private textures: string[], private tpf: number) {
         this.activeTexture = 0;
         this.activeFrames = 0;
     }
+
 
     tick(): void {
         ++this.activeFrames;
@@ -25,6 +27,6 @@ export default class Animation implements Processable {
     }
 
     public draw(render: Render): void {
-        render.drawTexture(this.textures[this.activeTexture]);
+        render.drawTexture(this.textures[this.activeTexture], this.verticalFlip);
     }
 }

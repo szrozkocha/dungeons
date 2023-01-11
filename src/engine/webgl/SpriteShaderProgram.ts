@@ -11,6 +11,7 @@ export default class SpriteShaderProgram extends ShaderProgram {
     public static readonly INNER_POS_UNIFORM = "uInnerPos";
     public static readonly ROTATION_UNIFORM = "uRotation";
     public static readonly SAMPLER_UNIFORM = "uSampler";
+    public static readonly VERTICAL_FLIP_UNIFORM = "uVerticalFlip";
 
     public constructor(gl: WebGLRenderingContext, vertexShaderSource: string, fragmentShaderSource: string) {
         super(gl, vertexShaderSource, fragmentShaderSource);
@@ -25,5 +26,6 @@ export default class SpriteShaderProgram extends ShaderProgram {
         this.uniforms[SpriteShaderProgram.INNER_POS_UNIFORM] = this.getUniformLocation(SpriteShaderProgram.INNER_POS_UNIFORM);
         this.uniforms[SpriteShaderProgram.ROTATION_UNIFORM] = this.getUniformLocation(SpriteShaderProgram.ROTATION_UNIFORM);
         this.uniforms[SpriteShaderProgram.SAMPLER_UNIFORM] = this.getUniformLocation(SpriteShaderProgram.SAMPLER_UNIFORM);
+        this.uniforms[SpriteShaderProgram.VERTICAL_FLIP_UNIFORM] = this.getUniformLocation(SpriteShaderProgram.VERTICAL_FLIP_UNIFORM);
     }
 }

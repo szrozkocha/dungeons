@@ -9,22 +9,31 @@ import InputSignal from "./engine/input/InputSignal";
 import Wall from "./engine/entity/wall/Wall";
 import WallType from "./engine/entity/wall/WallType";
 import FireColumn from "./engine/entity/FireColumn";
+import Knight from "./engine/entity/Knight";
 
 export default class Game extends GameWithLoop {
     private readonly entities: Entity[] = [];
-    private readonly sword: StaticEntity = new StaticEntity(-8 + 32, -8, 1, 0, new Sprite("sword"));
+    private readonly floor: StaticEntity[] = [];
+    private readonly sword: StaticEntity;
+    private readonly player: Knight;
 
     constructor(private render: Render, public inputManager: InputManager) {
         super(60);
+
+        this.player = new Knight(0, 0, 0, inputManager);
+        this.entities.push(this.player);
+
+        this.sword = new StaticEntity(-8 + 32, -8, 0, 0, new Sprite("sword"));
+        this.entities.push(this.sword);
 
         this.createFloors();
         this.createWalls();
 
         this.entities.push(
-            new FireColumn(-12 + -2 * 16, -10 + 3 * 16, 1, 0),
-            new FireColumn(-12 + -2 * 16, -2 + -2 * 16, 1, 0),
-            new FireColumn(-4 + 2 * 16, -10 + 3 * 16, 1, 0),
-            new FireColumn(-4 + 2 * 16, -2 + -2 * 16, 1, 0),
+            new FireColumn(-12 + -2 * 16, -10 + 3 * 16, 0, 0),
+            new FireColumn(-12 + -2 * 16, -2 + -2 * 16, 0, 0),
+            new FireColumn(-4 + 2 * 16, -10 + 3 * 16, 0, 0),
+            new FireColumn(-4 + 2 * 16, -2 + -2 * 16, 0, 0),
         );
 
         this.entities.push(
@@ -50,11 +59,6 @@ export default class Game extends GameWithLoop {
     }
 
     protected tick(frame: number): void {
-        const x = +this.inputManager.getStatus(InputSignal.LEFT) * -1 + +this.inputManager.getStatus(InputSignal.RIGHT);
-        const y = +this.inputManager.getStatus(InputSignal.UP) * -1 + +this.inputManager.getStatus(InputSignal.DOWN);
-
-        this.render.translate(x, y);
-
         for(const sprite of this.entities) {
             sprite.tick(frame);
         }
@@ -65,29 +69,38 @@ export default class Game extends GameWithLoop {
     protected draw(): void {
         this.render.clear();
 
-        for(const sprite of this.entities.sort((a, b) => Math.sign(a.getZ() - b.getZ()))) {
+        this.render.push();
+
+        this.render.translate(-this.player.getX(), -this.player.getY());
+
+        for(const floor of this.floor) {
+            floor.draw(this.render);
+        }
+
+        for(const sprite of this.entities.sort((a, b) => Math.sign((a.getZ() - a.getY()) - (b.getZ() - b.getY())))) {
             sprite.draw(this.render);
         }
 
-        this.sword.draw(this.render);
+        this.render.pop();
     }
 
+    // @ts-ignore
     private createFloors() {
         for(let x = -7; x <= -3;++x) {
             for(let y = -2; y <= 2;++y) {
-                this.entities.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
+                this.floor.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
             }
         }
 
         for(let x = -2; x <= 2;++x) {
             for (let y = -7; y <= 7; ++y) {
-                this.entities.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
+                this.floor.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
             }
         }
 
         for(let x = 3; x <= 7;++x) {
             for(let y = -2; y <= 2;++y) {
-                this.entities.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
+                this.floor.push(new StaticEntity(-8 + x * 16, -8 + y * 16, 0, 0, new Sprite("floor")));
             }
         }
 
