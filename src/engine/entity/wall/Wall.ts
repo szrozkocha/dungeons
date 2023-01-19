@@ -11,10 +11,7 @@ interface WallMapping {
 }
 
 function getWallMapping(neighbours: number): WallMapping[] {
-    if(!((wallMapping as any)["" + neighbours])) {
-        console.log(neighbours);
-    }
-    return (wallMapping as any)["" + neighbours] as WallMapping[];
+    return wallMapping.walls[wallMapping.neighbours[neighbours]];
 }
 
 export default class Wall extends Entity {

@@ -172,6 +172,8 @@ export default class Game extends GameWithLoop {
 
                 if(walls[y][x]) {
                     this.entities.push(new Wall(x * 16 + xOffset, y * 16 + yOffset, 0, 0, neighbours));
+                } else {
+                    this.floor.push(new StaticEntity(x * 16 + xOffset, y * 16 + yOffset, 0, 0, new Sprite("floor")));
                 }
             }
         }
