@@ -6,13 +6,12 @@ import Entity from "./engine/entity/Entity";
 import StaticEntity from "./engine/entity/StaticEntity";
 import InputManager from "./engine/input/InputManager";
 import InputSignal from "./engine/input/InputSignal";
-import Wall from "./engine/entity/wall/Wall";
-import WallType from "./engine/entity/wall/WallType";
 import FireColumn from "./engine/entity/FireColumn";
 import Knight from "./engine/entity/Knight";
+import Wall from "./engine/entity/wall/Wall";
 
 export default class Game extends GameWithLoop {
-    private readonly entities: Entity[] = [];
+    private entities: Entity[] = [];
     private readonly floor: StaticEntity[] = [];
     private readonly sword: StaticEntity;
     private readonly player: Knight;
@@ -107,77 +106,74 @@ export default class Game extends GameWithLoop {
     }
 
     private createWalls() {
-        //TOP
-        for(let x = -7; x <= -4;++x) {
-            this.entities.push(new Wall(-8 + x * 16, 3 * 16, -1, 0, WallType.TOP));
+        const walls: boolean[][] = [];
+
+        for(let i = 0;i < 16 * 3;++i) {
+            walls[i] = [];
         }
 
-        for(let x = -2; x <= 2;++x) {
-            this.entities.push(new Wall(-8 + x * 16, 8 * 16, -1, 0, WallType.TOP));
+        const start = 0;
+
+        const xOffset = -((start % 16)  * 3) * 16;
+        const yOffset = -(Math.floor(start / 16) * 3) * 16;
+
+        for (let i = start;i < 256;++i) {
+            const gY = Math.floor(i / 16);
+            const gX = i % 16;
+
+            const wallPattern: boolean[][] = [
+              [(i & 1) > 0, (i & 2) > 0, (i & 4) > 0],
+              [(i & 8) > 0, true, (i & 16) > 0],
+              [(i & 32) > 0, (i & 64) > 0, (i & 128) > 0]
+            ]
+
+            for (let y = 0; y < 3; y++) {
+                for (let x = 0; x < 3; x++) {
+                    walls[gY * 3 + y][gX * 3 + x] = wallPattern[y][x];
+                }
+            }
         }
 
-        for(let x = 4; x <= 7;++x) {
-            this.entities.push(new Wall(-8 + x * 16, 3 * 16, -1, 0, WallType.TOP));
+        const getWall = (y: number, x: number) => {
+            if (x >= 0 && x < 16 * 3 && y >= 0 && y < 16 * 3) {
+                return walls[y][x];
+            }
+            return true;
         }
 
-        //BOTTOM
-        for(let x = -7; x <= -4;++x) {
-            this.entities.push(new Wall(-8 + x * 16, -8 + -2 * 16, 2, 0, WallType.BOTTOM));
+        for (let y = 0; y < 16 * 3; y++) {
+            for (let x = 0; x < 16 * 3; x++) {
+                let neighbours = 0;
+
+                if(getWall(y - 1, x - 1)) {
+                    neighbours += 1;
+                }
+                if(getWall(y - 1, x)) {
+                    neighbours += 2;
+                }
+                if(getWall(y - 1, x + 1)) {
+                    neighbours += 4;
+                }
+                if(getWall(y, x - 1)) {
+                    neighbours += 8;
+                }
+                if(getWall(y, x + 1)) {
+                    neighbours += 16;
+                }
+                if(getWall(y + 1, x - 1)) {
+                    neighbours += 32;
+                }
+                if(getWall(y + 1, x)) {
+                    neighbours += 64;
+                }
+                if(getWall(y + 1, x + 1)) {
+                    neighbours += 128;
+                }
+
+                if(walls[y][x]) {
+                    this.entities.push(new Wall(x * 16 + xOffset, y * 16 + yOffset, 0, 0, neighbours));
+                }
+            }
         }
-
-        for(let x = -2; x <= 2;++x) {
-            this.entities.push(new Wall(-8 + x * 16, -8 + -7 * 16, 2, 0, WallType.BOTTOM));
-        }
-
-        for(let x = 4; x <= 7;++x) {
-            this.entities.push(new Wall(-8 + x * 16, -8 + -2 * 16, 2, 0, WallType.BOTTOM));
-        }
-
-        //LEFT
-        for(let y = 5; y <= 8;++y) {
-            this.entities.push(new Wall(-8 + -3 * 16, -8 + y * 16, -1, 0, WallType.LEFT));
-        }
-
-        for(let y = -1; y <= 3;++y) {
-            this.entities.push(new Wall(-8 + -8 * 16, -8 + y * 16, -1, 0, WallType.LEFT));
-        }
-
-        for(let y = -6; y <= -3;++y) {
-            this.entities.push(new Wall(-8 + -3 * 16, -8 + y * 16, -1, 0, WallType.LEFT));
-        }
-
-        //RIGHT
-        for(let y = 5; y <= 8;++y) {
-            this.entities.push(new Wall(-8 + 3 * 16, -8 + y * 16, -1, 0, WallType.RIGHT));
-        }
-
-        for(let y = -1; y <= 3;++y) {
-            this.entities.push(new Wall(-8 + 8 * 16, -8 + y * 16, -1, 0, WallType.RIGHT));
-        }
-
-        for(let y = -6; y <= -3;++y) {
-            this.entities.push(new Wall(-8 + 3 * 16, -8 + y * 16, -1, 0, WallType.RIGHT));
-        }
-
-
-        this.entities.push(new Wall(-8 + -8 * 16, -8 + 4 * 16, -1, 0, WallType.CONCAVE_CORNER_TOP_LEFT));
-        this.entities.push(new Wall(-8 + -8 * 16, -8 + -2 * 16, -1, 0, WallType.CONCAVE_CORNER_BOTTOM_LEFT));
-
-        this.entities.push(new Wall(-8 + -3 * 16, -8 + 9 * 16, -1, 0, WallType.CONCAVE_CORNER_TOP_LEFT));
-        this.entities.push(new Wall(-8 + -3 * 16, -8 + -7 * 16, -1, 0, WallType.CONCAVE_CORNER_BOTTOM_LEFT));
-
-
-        this.entities.push(new Wall(-8 + 8 * 16, -8 + 4 * 16, -1, 0, WallType.CONCAVE_CORNER_TOP_RIGHT));
-        this.entities.push(new Wall(-8 + 8 * 16, -8 + -2 * 16, -1, 0, WallType.CONCAVE_CORNER_BOTTOM_RIGHT));
-
-        this.entities.push(new Wall(-8 + 3 * 16, -8 + 9 * 16, -1, 0, WallType.CONCAVE_CORNER_TOP_RIGHT));
-        this.entities.push(new Wall(-8 + 3 * 16, -8 + -7 * 16, -1, 0, WallType.CONCAVE_CORNER_BOTTOM_RIGHT));
-
-
-        this.entities.push(new Wall(-8 + -3 * 16, 3 * 16, -1, 0, WallType.CONVEX_CORNER_TOP_LEFT));
-        this.entities.push(new Wall(-8 + 3 * 16, 3 * 16, -1, 0, WallType.CONVEX_CORNER_TOP_RIGHT));
-
-        this.entities.push(new Wall(-8 + -3 * 16, -8 + -2 * 16, 2, 0, WallType.CONVEX_CORNER_BOTTOM_LEFT));
-        this.entities.push(new Wall(-8 + 3 * 16, -8 + -2 * 16, 2, 0, WallType.CONVEX_CORNER_BOTTOM_RIGHT));
     }
 }
