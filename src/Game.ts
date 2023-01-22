@@ -8,13 +8,15 @@ import InputManager from "./engine/input/InputManager";
 import InputSignal from "./engine/input/InputSignal";
 import FireColumn from "./engine/entity/FireColumn";
 import Knight from "./engine/entity/Knight";
-import Wall from "./engine/entity/wall/Wall";
+import Walls from "./engine/entity/wall/Walls";
 
 export default class Game extends GameWithLoop {
     private entities: Entity[] = [];
     private readonly floor: StaticEntity[] = [];
     private readonly sword: StaticEntity;
     private readonly player: Knight;
+    private readonly walls: Walls;
+
 
     constructor(private render: Render, public inputManager: InputManager) {
         super(60);
@@ -25,8 +27,33 @@ export default class Game extends GameWithLoop {
         this.sword = new StaticEntity(-8 + 32, -8, 0, 0, new Sprite("sword"));
         this.entities.push(this.sword);
 
-        this.createFloors();
-        this.createWalls();
+        this.walls = new Walls(
+          16 * -5,
+          16 * -5,
+          [
+              [true, true, true, true, true, true, true, true, true, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, false, false, false, false, false, false, false, true, true],
+              [true, false, false, false, false, false, false, false, true, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, false, false, false, false, false, false, false, false, true],
+              [true, true, true, true, true, true, true, true, true, true]
+          ]
+        );
+
+        this.entities.push(
+          ...this.walls.walls
+        )
+
+        this.floor.push(
+          ...this.walls.floors
+        );
+
+        //this.createFloors();
+        //this.createWalls();
 
         this.entities.push(
             new FireColumn(-12 + -2 * 16, -10 + 3 * 16, 0, 0),
@@ -61,6 +88,8 @@ export default class Game extends GameWithLoop {
         for(const sprite of this.entities) {
             sprite.tick(frame);
         }
+
+        this.player.processCollision(this.walls);
 
         this.sword.setRotation(this.sword.getRotation() + Math.PI / 120);
     }
@@ -105,7 +134,7 @@ export default class Game extends GameWithLoop {
 
     }
 
-    private createWalls() {
+    /*private createWalls() {
         const walls: boolean[][] = [];
 
         for(let i = 0;i < 16 * 3;++i) {
@@ -177,5 +206,5 @@ export default class Game extends GameWithLoop {
                 }
             }
         }
-    }
+    }*/
 }
