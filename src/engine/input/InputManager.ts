@@ -3,6 +3,7 @@ import InputSignal from "./InputSignal";
 export default class InputManager {
     private mapping: Map<string, InputSignal>;
     private states: Map<InputSignal, boolean>;
+    private mousePosition: {x: number, y: number} = {x: 0, y: 0};
 
     public constructor() {
         this.states = new Map<InputSignal, boolean>();
@@ -19,6 +20,10 @@ export default class InputManager {
         return this.states.get(inputSignal) as boolean;
     }
 
+    public getMousePosition(): {x: number, y: number} {
+        return this.mousePosition;
+    }
+
     public addMapping(inputSignal: InputSignal, key: string) {
         this.mapping.set(key, inputSignal);
     }
@@ -29,6 +34,10 @@ export default class InputManager {
 
     public onKeyUp(event: KeyboardEvent) {
         this.changeKey(event, false);
+    }
+
+    public onMouseMove(event: MouseEvent) {
+        this.mousePosition = {x: event.clientX - window.innerWidth / 2, y: -(event.clientY - window.innerHeight / 2)};
     }
 
     private changeKey(event: KeyboardEvent, value: boolean) {

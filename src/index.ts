@@ -46,6 +46,10 @@ window.onload = function () {
             inputManager.onKeyUp(event);
         };
 
+        window.onmousemove = (event: MouseEvent) => {
+            inputManager.onMouseMove(event);
+        }
+
         requestAnimationFrame(run);
     };
 

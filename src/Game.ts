@@ -16,6 +16,7 @@ export default class Game extends GameWithLoop {
     private readonly sword: StaticEntity;
     private readonly player: Knight;
     private readonly walls: Walls;
+    private swordRotation: number = 0;
 
 
     constructor(private render: Render, public inputManager: InputManager) {
@@ -24,8 +25,8 @@ export default class Game extends GameWithLoop {
         this.player = new Knight(0, 0, 0, inputManager);
         this.entities.push(this.player);
 
-        this.sword = new StaticEntity(-8 + 32, -8, 0, 0, new Sprite("sword"));
-        this.entities.push(this.sword);
+        this.sword = new StaticEntity(0, 0, 0, 0, new Sprite("sword"));
+        //this.entities.push(this.sword);
 
         this.walls = new Walls(
           16 * -5,
@@ -91,7 +92,8 @@ export default class Game extends GameWithLoop {
 
         this.player.processCollision(this.walls);
 
-        this.sword.setRotation(this.sword.getRotation() + Math.PI / 120);
+        let mousePosition = this.inputManager.getMousePosition();
+        this.swordRotation = Math.atan2(mousePosition.y, mousePosition.x) -Math.PI / 2;
     }
 
     protected draw(): void {
@@ -108,6 +110,15 @@ export default class Game extends GameWithLoop {
         for(const sprite of this.entities.sort((a, b) => Math.sign((a.getZ() - a.getY()) - (b.getZ() - b.getY())))) {
             sprite.draw(this.render);
         }
+
+        this.render.push()
+            this.render.translate(this.player.getX(), this.player.getY());
+            this.render.push()
+                this.render.rotate(this.swordRotation);
+                this.render.translate(0, 24);
+                this.sword.draw(this.render);
+            this.render.pop()
+        this.render.pop();
 
         this.render.pop();
     }
